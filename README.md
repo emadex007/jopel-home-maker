@@ -12,8 +12,8 @@ Built by Emadex Creations on the same stack as Ronia Logistics: **TanStack Start
 |---|---|---|
 | 1 | Database, public site, portfolio + project galleries, booking, quote request, contact, WhatsApp, settings-driven theme | ✅ Done |
 | 2 | Admin dashboard: login, projects & photo uploads (R2), services, testimonials, **site settings editor** (colours, fonts, sizes, header, footer, page text) with live preview, inbox, staff accounts | ✅ Done |
-| 3 | **Quotation builder** (email + printable PDF), **live chat** widget + admin replies | Next |
-| 4 | Polish: SEO/sitemap, email templates, custom domain | |
+| 3 | **Quotation builder** (from a quote request, optional VAT, valid-until, client link to view/print/accept, send by WhatsApp or email), **live chat** (bubble bottom-right, WhatsApp bottom-left, replies from the dashboard) | ✅ Done |
+| 4 | `sitemap.xml` + `robots.txt`, branded notification & quotation emails, share buttons on project pages | ✅ Done |
 
 ## First-time setup (Windows, same as Ronia)
 
@@ -57,6 +57,16 @@ Then open `/admin`, enter the setup code, your name, email and password. After t
 
 Local and live are separate databases, so you create the owner once locally and once on the live site.
 
+### Quotations
+
+Inbox → open a quote request → **Create quotation** (client details are filled in), or Quotations → **New quotation**.
+Add items, an optional discount and VAT, check the valid-until date (default set in Site settings → Quotations), then **Create quotation**.
+Send it with **Send on WhatsApp** or **Send by email** (needs Resend). The client gets a private link (`/q/...`) where they can view, print / save as PDF, accept, or ask a question on WhatsApp. Accepting notifies you and marks the quote request as won.
+
+### Live chat
+
+Visitors chat from the bubble at the bottom-right of the site (the WhatsApp link is inside the chat window). Replies happen in **Live chat** in the dashboard. While anyone has the dashboard open, the chat shows "Online now"; otherwise visitors see the away message from Site settings → Live chat.
+
 ### Optional: email notifications (Resend)
 
 ```powershell
@@ -76,7 +86,7 @@ Once they have a domain on Cloudflare: **Email → Email Routing → Routing rul
 
 `migrations/0002_seed_sample_content.sql` adds **sample** projects and services with Unsplash photos so the site isn't empty. These are placeholders, not Jo-pearl's real work. Replace them with real projects from the dashboard (Phase 2) before sharing the site publicly. Also update the phone, WhatsApp, email and address (currently placeholders in `src/lib/site-defaults.ts`, editable from the dashboard in Phase 2).
 
-Testimonials and the stats row are intentionally empty and stay hidden until real ones are added. Add them under **Testimonials** and **Site settings → Home page** in the dashboard.
+Testimonials: four SAMPLE templates are added switched off. Replace them with real clients' words in **Testimonials**, then switch them on, and they slide across the home page. **Clients & partners** logos scroll across the home page once real logos are added. The stats row stays hidden until real figures are added in **Site settings → Home page**.
 
 ## Where things live
 
@@ -85,11 +95,13 @@ Testimonials and the stats row are intentionally empty and stay hidden until rea
 | `src/lib/site-defaults.ts` | Every editable setting + its default value |
 | `src/server/db.ts` | D1 queries, email notifications |
 | `src/lib/api.ts` | Server functions used by pages (reads + form submissions) |
-| `src/server.ts` | Worker entry: `/media/*` from R2, `/api/upload`, inbound email |
+| `src/server.ts` | Worker entry: `/media/*` from R2, `/api/upload`, `/robots.txt`, `/sitemap.xml`, inbound email |
 | `src/routes/` | Pages: `/`, `/about`, `/services`, `/portfolio`, `/portfolio/$slug`, `/book`, `/quote`, `/contact` |
 | `src/components/` | Header, Footer, WhatsApp button, Lightbox, project cards, forms |
 | `src/routes/admin*.tsx` | Dashboard pages (login, overview, inbox, projects, services, testimonials, settings, staff) |
 | `src/lib/admin-api.ts` | Dashboard server functions (every one checks the login session) |
 | `src/server/auth.ts` | Password hashing (PBKDF2) and sessions |
 | `src/components/admin/` | Dashboard UI kit + the settings editor schema (add a field there and it shows up in the editor) |
+| `src/lib/quotes-api.ts`, `src/lib/quote-calc.ts` | Quotations (dashboard + client page `/q/$token`) |
+| `src/lib/chat-api.ts`, `src/components/ChatWidget.tsx` | Live chat (visitor widget + dashboard) |
 | `migrations/` | D1 schema + sample content |

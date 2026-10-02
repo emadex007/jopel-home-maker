@@ -61,7 +61,7 @@ async function uniqueSlug(table: "projects" | "services", base: string, exceptId
 }
 
 /** Moves a row up or down by rewriting sort_order for the whole table. */
-async function moveRow(table: "projects" | "services" | "testimonials" | "project_photos", id: number, dir: -1 | 1, where = "1=1", binds: unknown[] = []) {
+async function moveRow(table: "projects" | "services" | "testimonials" | "project_photos" | "clients", id: number, dir: -1 | 1, where = "1=1", binds: unknown[] = []) {
   const { results } = await env.DB.prepare(`SELECT id FROM ${table} WHERE ${where} ORDER BY sort_order, id`)
     .bind(...binds)
     .all<{ id: number }>();
@@ -88,7 +88,7 @@ async function deleteMediaFile(url: string) {
 async function mediaStillUsed(url: string) {
   const r = await env.DB.prepare(
     `SELECT (SELECT COUNT(*) FROM project_photos WHERE url = ?1) + (SELECT COUNT(*) FROM projects WHERE cover_image = ?1)
-          + (SELECT COUNT(*) FROM services WHERE image = ?1) + (SELECT COUNT(*) FROM settings WHERE value LIKE '%' || ?1 || '%') AS n`,
+          + (SELECT COUNT(*) FROM services WHERE image = ?1) + (SELECT COUNT(*) FROM clients WHERE logo = ?1) + (SELECT COUNT(*) FROM settings WHERE value LIKE '%' || ?1 || '%') AS n`,
   )
     .bind(url)
     .first<{ n: number }>();
@@ -463,6 +463,55 @@ export const moveTestimonial = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     await requireStaff();
     await moveRow("testimonials", int(data.id), data.dir === -1 ? -1 : 1);
+    return { ok: true };
+  });
+
+// ---------- clients & partners ----------
+
+export type AdminClient = { id?: number; name: string; logo: string; url: string; active: number };
+
+export const adminListClients = createServerFn({ method: "GET" }).handler(async () => {
+  await requireStaff();
+  const { results } = await env.DB.prepare("SELECT id, name, logo, url, active FROM clients ORDER BY sort_order, id").all<Required<AdminClient>>();
+  return results ?? [];
+});
+
+export const saveClient = createServerFn({ method: "POST" })
+  .inputValidator((d: AdminClient) => d)
+  .handler(async ({ data }) => {
+    await requireStaff();
+    const name = str(data.name, 120);
+    const logo = str(data.logo, 500);
+    let url = str(data.url, 300);
+    if (url && !/^https?:\/\//i.test(url)) url = `https://${url}`;
+    if (name.length < 2) return { ok: false as const, error: "Please enter the company name." };
+    if (!logo) return { ok: false as const, error: "Please upload the company's logo." };
+    const f = [name, logo, url, bool(data.active)];
+    if (data.id) {
+      await env.DB.prepare("UPDATE clients SET name=?, logo=?, url=?, active=? WHERE id=?").bind(...f, int(data.id)).run();
+    } else {
+      await env.DB.prepare("INSERT INTO clients (name, logo, url, active, sort_order) VALUES (?, ?, ?, ?, (SELECT COALESCE(MAX(sort_order), -1) + 1 FROM clients))")
+        .bind(...f)
+        .run();
+    }
+    return { ok: true as const };
+  });
+
+export const deleteClient = createServerFn({ method: "POST" })
+  .inputValidator((id: number) => int(id))
+  .handler(async ({ data: id }) => {
+    await requireStaff();
+    const row = await env.DB.prepare("SELECT logo FROM clients WHERE id = ?").bind(id).first<{ logo: string }>();
+    await env.DB.prepare("DELETE FROM clients WHERE id = ?").bind(id).run();
+    if (row?.logo && !(await mediaStillUsed(row.logo))) await deleteMediaFile(row.logo);
+    return { ok: true };
+  });
+
+export const moveClient = createServerFn({ method: "POST" })
+  .inputValidator((d: { id: number; dir: -1 | 1 }) => d)
+  .handler(async ({ data }) => {
+    await requireStaff();
+    await moveRow("clients", int(data.id), data.dir === -1 ? -1 : 1);
     return { ok: true };
   });
 

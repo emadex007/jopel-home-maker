@@ -4,6 +4,7 @@ import handler from "@tanstack/react-start/server-entry";
 import PostalMime from "postal-mime";
 import type { AppEnv } from "~/lib/env";
 import { SESSION_COOKIE, getStaffByToken, readCookie } from "~/server/auth";
+import { rememberOrigin } from "~/server/db";
 
 const MAX_UPLOAD = 8 * 1024 * 1024; // 8 MB per visitor photo
 const MAX_ADMIN_UPLOAD = 15 * 1024 * 1024; // 15 MB per dashboard upload
@@ -59,9 +60,46 @@ async function handleUpload(request: Request, env: AppEnv, admin: boolean) {
   return json({ url: `/media/${key}` });
 }
 
+const STATIC_PAGES = ["/", "/about", "/services", "/portfolio", "/book", "/quote", "/contact"];
+
+function robotsTxt(origin: string) {
+  return new Response(
+    `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /q/\nDisallow: /api/\n\nSitemap: ${origin}/sitemap.xml\n`,
+    { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=3600" } },
+  );
+}
+
+async function sitemapXml(origin: string, env: AppEnv) {
+  let projects: { slug: string; updated_at: string }[] = [];
+  try {
+    const { results } = await env.DB.prepare("SELECT slug, updated_at FROM projects WHERE published = 1 ORDER BY sort_order, id DESC").all<{
+      slug: string;
+      updated_at: string;
+    }>();
+    projects = results ?? [];
+  } catch {
+    /* database not ready yet: list the main pages only */
+  }
+  const esc = (u: string) => u.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const urls = [
+    ...STATIC_PAGES.map((p) => `<url><loc>${esc(origin + p)}</loc><changefreq>weekly</changefreq><priority>${p === "/" ? "1.0" : "0.8"}</priority></url>`),
+    ...projects.map(
+      (p) =>
+        `<url><loc>${esc(`${origin}/portfolio/${encodeURIComponent(p.slug)}`)}</loc>${p.updated_at ? `<lastmod>${p.updated_at.slice(0, 10)}</lastmod>` : ""}<changefreq>monthly</changefreq><priority>0.7</priority></url>`,
+    ),
+  ];
+  return new Response(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`, {
+    headers: { "Content-Type": "application/xml; charset=utf-8", "Cache-Control": "public, max-age=3600" },
+  });
+}
+
 export default {
   async fetch(request: Request, env: AppEnv, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    rememberOrigin(url.origin); // used for links and images in notification emails
+
+    if (url.pathname === "/robots.txt") return robotsTxt(url.origin);
+    if (url.pathname === "/sitemap.xml") return sitemapXml(url.origin, env);
 
     if (url.pathname.startsWith("/media/") && (request.method === "GET" || request.method === "HEAD")) {
       return serveMedia(request, env, decodeURIComponent(url.pathname.slice("/media/".length)));

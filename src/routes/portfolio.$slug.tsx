@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { getProject } from "~/lib/api";
 import { cn, img, useSite, waLink } from "~/lib/ui";
 import { Lightbox } from "~/components/ui";
-import { ArrowLeft, ArrowRight, ImagesIcon, WhatsAppIcon } from "~/components/Icons";
+import { ArrowLeft, ArrowRight, CheckIcon, FacebookIcon, ImagesIcon, WhatsAppIcon, XIcon } from "~/components/Icons";
 
 export const Route = createFileRoute("/portfolio/$slug")({
   loader: async ({ params }) => {
@@ -90,6 +90,7 @@ function ProjectPage() {
                 </a>
               )}
             </div>
+            <ShareBar title={p.title} />
           </aside>
           <div className="lg:col-span-8">
             <p className="eyebrow mb-4">About the project</p>
@@ -176,5 +177,64 @@ function ProjectPage() {
 
       {open !== null && <Lightbox photos={photos} index={open} onIndex={setOpen} onClose={() => setOpen(null)} title={p.title} />}
     </>
+  );
+}
+
+/** Share this project: copy link, WhatsApp, Facebook, X, or the phone's own share menu. */
+function ShareBar({ title }: { title: string }) {
+  const s = useSite();
+  const [copied, setCopied] = useState(false);
+  const [url, setUrl] = useState("");
+  const [canShare, setCanShare] = useState(false);
+  useEffect(() => {
+    setUrl(window.location.href.split("#")[0]);
+    setCanShare(typeof navigator !== "undefined" && "share" in navigator);
+  }, []);
+  const text = `${title} | ${s.brand.name}`;
+  const enc = encodeURIComponent;
+  const btn = "flex h-10 w-10 items-center justify-center rounded-full border border-line transition-colors hover:bg-primary hover:text-on-primary";
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.prompt("Copy this link:", url);
+    }
+  }
+
+  return (
+    <div className="mt-8 border-t border-line pt-6">
+      <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted">Share this project</p>
+      <div className="flex flex-wrap items-center gap-2">
+        <a href={`https://wa.me/?text=${enc(`${text}\n${url}`)}`} target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp" className={btn}>
+          <WhatsAppIcon size={18} />
+        </a>
+        <a href={`https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`} target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook" className={btn}>
+          <FacebookIcon size={18} />
+        </a>
+        <a href={`https://x.com/intent/post?text=${enc(text)}&url=${enc(url)}`} target="_blank" rel="noopener noreferrer" aria-label="Share on X" className={btn}>
+          <XIcon size={16} />
+        </a>
+        <button onClick={copy} className="inline-flex h-10 items-center gap-2 rounded-full border border-line px-4 text-sm font-medium transition-colors hover:bg-primary hover:text-on-primary">
+          {copied ? (
+            <>
+              <CheckIcon size={16} /> Link copied
+            </>
+          ) : (
+            "Copy link"
+          )}
+        </button>
+        {canShare && (
+          <button
+            onClick={() => navigator.share({ title: text, url }).catch(() => {})}
+            className="inline-flex h-10 items-center rounded-full border border-line px-4 text-sm font-medium transition-colors hover:bg-primary hover:text-on-primary lg:hidden"
+          >
+            More…
+          </button>
+        )}
+      </div>
+    </div>
   );
 }

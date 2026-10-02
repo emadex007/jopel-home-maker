@@ -4,6 +4,7 @@ import { cn, img, useSite } from "~/lib/ui";
 import { SiteLink } from "~/components/SiteLink";
 import { ProjectCard, SectionHeading } from "~/components/ui";
 import { ArrowRight } from "~/components/Icons";
+import { LogoMarquee, TestimonialSlider } from "~/components/Sliders";
 
 export const Route = createFileRoute("/")({
   loader: () => getHomeData(),
@@ -12,7 +13,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const s = useSite();
-  const { services, projects, testimonials } = Route.useLoaderData();
+  const { services, projects, testimonials, clients } = Route.useLoaderData();
   const h = s.hero;
   const home = s.home;
   const center = h.align === "center";
@@ -149,24 +150,23 @@ function Home() {
         </section>
       )}
 
-      {/* TESTIMONIALS (hidden until real ones are added in the dashboard) */}
+      {/* CLIENTS & PARTNERS (hidden until logos are added in the dashboard) */}
+      {home.showClients && clients.length > 0 && (
+        <section className="border-y border-line bg-surface py-12 md:py-16">
+          <div className="container-x">
+            <p className="eyebrow mb-8 text-center">{home.clientsTitle}</p>
+          </div>
+          <LogoMarquee items={clients} />
+        </section>
+      )}
+
+      {/* TESTIMONIALS (hidden until at least one is switched on in the dashboard) */}
       {home.showTestimonials && testimonials.length > 0 && (
         <section className="section">
           <div className="container-x">
-            <SectionHeading eyebrow="Kind words" title="What our clients say" align="center" />
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {testimonials.map((t) => (
-                <figure key={t.id} className="flex flex-col rounded-[var(--radius)] border border-line bg-surface p-8">
-                  <span className="font-heading text-6xl leading-none text-accent" aria-hidden>
-                    “
-                  </span>
-                  <blockquote className="mt-2 flex-1 font-heading text-xl leading-snug">{t.quote}</blockquote>
-                  <figcaption className="mt-6 text-sm">
-                    <span className="font-semibold">{t.name}</span>
-                    {t.role && <span className="block text-muted">{t.role}</span>}
-                  </figcaption>
-                </figure>
-              ))}
+            <SectionHeading eyebrow="Kind words" title={home.testimonialsTitle} align="center" />
+            <div className="-mx-3">
+              <TestimonialSlider items={testimonials} seconds={Number(home.sliderSeconds) || 6} />
             </div>
           </div>
         </section>

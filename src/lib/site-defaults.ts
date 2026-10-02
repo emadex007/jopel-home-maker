@@ -68,6 +68,10 @@ export type SiteSettings = {
     showProjects: boolean;
     showProcess: boolean;
     showTestimonials: boolean;
+    testimonialsTitle: string;
+    sliderSeconds: number; // how long each testimonial shows before sliding
+    showClients: boolean;
+    clientsTitle: string;
     showCta: boolean;
     process: { title: string; text: string }[];
     ctaTitle: string;
@@ -131,6 +135,21 @@ export type SiteSettings = {
     title: string;
     description: string;
     ogImage: string;
+  };
+  quotes: {
+    numberPrefix: string; // e.g. JP-Q → JP-Q-0001
+    validDays: number; // default validity for new quotations
+    intro: string; // shown above the items
+    notes: string; // default notes on new quotations
+    terms: string; // shown at the bottom of every quotation
+    acceptMessage: string; // shown to the client after accepting
+  };
+  chat: {
+    enabled: boolean;
+    title: string;
+    greeting: string; // first message visitors see
+    offlineMessage: string; // shown when no staff has been active recently
+    buttonLabel: string;
   };
 };
 
@@ -210,6 +229,10 @@ export const SITE_DEFAULTS: SiteSettings = {
     showProjects: true,
     showProcess: true,
     showTestimonials: true,
+    testimonialsTitle: "What our clients say",
+    sliderSeconds: 6,
+    showClients: true,
+    clientsTitle: "Clients & partners we've worked with",
     showCta: true,
     process: [
       { title: "Consultation", text: "We visit or call to understand your space, style, budget and timeline." },
@@ -286,7 +309,23 @@ export const SITE_DEFAULTS: SiteSettings = {
     description:
       "Jo-pearl Home Maker designs and decorates homes, apartments, offices and commercial spaces. View our portfolio, book a consultation or request a free quote.",
     ogImage: U("1618221195710-dd6b41faaea6", 1200),
+  },  quotes: {
+    numberPrefix: "JP-Q",
+    validDays: 14,
+    intro: "Thank you for considering Jo-pearl Home Maker. Below is our quotation for your project.",
+    notes: "",
+    terms:
+      "Prices are in Naira and valid until the date shown. Final costs may change if the scope of work changes after a site visit. Work begins once the quotation is accepted and agreed with our team.",
+    acceptMessage: "Thank you! We've received your acceptance and our team will contact you shortly to agree the next steps.",
   },
+  chat: {
+    enabled: true,
+    title: "Chat with us",
+    greeting: "Hi there! 👋 Ask us anything about your space, our services or a quote. We'll reply as soon as we can.",
+    offlineMessage: "We're away right now, but leave a message and we'll reply as soon as we're back. For a faster answer, message us on WhatsApp.",
+    buttonLabel: "Chat with us",
+  },
+
 };
 
 export type SettingsKey = keyof SiteSettings;

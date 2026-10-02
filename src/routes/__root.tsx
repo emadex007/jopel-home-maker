@@ -8,7 +8,7 @@ import { SiteContext, googleFontsHrefs, img } from "~/lib/ui";
 import { ThemeStyle } from "~/components/ThemeStyle";
 import { Header } from "~/components/Header";
 import { Footer } from "~/components/Footer";
-import { WhatsAppButton } from "~/components/WhatsAppButton";
+import { ChatWidget } from "~/components/ChatWidget";
 
 export const Route = createRootRoute({
   loader: async () => {
@@ -65,8 +65,8 @@ function RootLayout() {
   const { settings, services } = Route.useLoaderData();
   const pathname = useRouterState({ select: (st) => st.location.pathname });
 
-  // The admin dashboard has its own layout (src/routes/admin.tsx).
-  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+  // The admin dashboard and client quotation pages have their own layout (no site header/footer).
+  if (pathname === "/admin" || pathname.startsWith("/admin/") || pathname.startsWith("/q/")) {
     return (
       <SiteContext.Provider value={settings}>
         <ThemeStyle s={settings} />
@@ -85,7 +85,7 @@ function RootLayout() {
         </main>
         <Footer services={services} />
       </div>
-      <WhatsAppButton />
+      <ChatWidget />
     </SiteContext.Provider>
   );
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { deleteInboxItem, getInbox, setInboxStatus, type InboxTab } from "~/lib/admin-api";
 import { cn, img, phoneDigits, useSite, waLink } from "~/lib/ui";
 import { AdminPage, Badge, Btn, EmptyState, Modal, fmtDate, useAction } from "~/components/admin/kit";
@@ -240,7 +240,14 @@ function Detail({ tab, r }: { tab: InboxTab; r: Row }) {
           </div>
         </div>
       )}
-      {tab === "quotes" && <p className="text-xs text-zinc-500">The quotation builder (draft, email and print quotes) comes in the next update.</p>}
+      {tab === "quotes" && (
+        <div className="flex flex-wrap items-center gap-3 rounded-lg bg-zinc-50 p-4">
+          <p className="flex-1 text-sm text-zinc-600">Ready to price this job? Create a quotation pre-filled with this client's details.</p>
+          <Link to="/admin/quotes/$id" params={{ id: "new" }} search={{ from: Number(r.id) }} className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700">
+            Create quotation
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

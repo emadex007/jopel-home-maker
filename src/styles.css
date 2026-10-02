@@ -173,3 +173,13 @@
   .fade-up, .fade-up-2, .fade-up-3 { animation: none; }
   html { scroll-behavior: auto; }
 }
+
+/* Clients & partners logo strip */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track { animation: marquee 40s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; flex-wrap: wrap; justify-content: center; width: 100%; }
+}

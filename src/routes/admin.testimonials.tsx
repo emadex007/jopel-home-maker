@@ -29,7 +29,7 @@ function TestimonialsAdmin() {
   return (
     <AdminPage
       title="Testimonials"
-      subtitle="Real reviews from your clients. The section appears on the home page once you add one."
+      subtitle="Real reviews from your clients. They slide across the home page once at least one is switched on. Edit the SAMPLE templates with real clients' words (with their permission), then switch them on."
       actions={<Btn variant="primary" onClick={() => setEdit({ ...EMPTY })}>+ New testimonial</Btn>}
     >
       {items.length === 0 ? (

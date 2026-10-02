@@ -17,6 +17,8 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as QuoteRouteImport } from './routes/quote'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminChatRouteImport } from './routes/admin.chat'
+import { Route as AdminClientsRouteImport } from './routes/admin.clients'
 import { Route as AdminInboxRouteImport } from './routes/admin.inbox'
 import { Route as AdminServicesRouteImport } from './routes/admin.services'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
@@ -25,8 +27,11 @@ import { Route as AdminTestimonialsRouteImport } from './routes/admin.testimonia
 import { Route as AdminLoginRouteImport } from './routes/admin_.login'
 import { Route as PortfolioIndexRouteImport } from './routes/portfolio.index'
 import { Route as PortfolioSlugRouteImport } from './routes/portfolio.$slug'
+import { Route as QTokenRouteImport } from './routes/q.$token'
 import { Route as AdminProjectsIndexRouteImport } from './routes/admin.projects.index'
 import { Route as AdminProjectsIdRouteImport } from './routes/admin.projects.$id'
+import { Route as AdminQuotesIndexRouteImport } from './routes/admin.quotes.index'
+import { Route as AdminQuotesIdRouteImport } from './routes/admin.quotes.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -66,6 +71,16 @@ const ServicesRoute = ServicesRouteImport.update({
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminChatRoute = AdminChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminClientsRoute = AdminClientsRouteImport.update({
+  id: '/clients',
+  path: '/clients',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminInboxRoute = AdminInboxRouteImport.update({
@@ -108,6 +123,11 @@ const PortfolioSlugRoute = PortfolioSlugRouteImport.update({
   path: '/portfolio/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QTokenRoute = QTokenRouteImport.update({
+  id: '/q/$token',
+  path: '/q/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminProjectsIndexRoute = AdminProjectsIndexRouteImport.update({
   id: '/projects/',
   path: '/projects/',
@@ -116,6 +136,16 @@ const AdminProjectsIndexRoute = AdminProjectsIndexRouteImport.update({
 const AdminProjectsIdRoute = AdminProjectsIdRouteImport.update({
   id: '/projects/$id',
   path: '/projects/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminQuotesIndexRoute = AdminQuotesIndexRouteImport.update({
+  id: '/quotes/',
+  path: '/quotes/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminQuotesIdRoute = AdminQuotesIdRouteImport.update({
+  id: '/quotes/$id',
+  path: '/quotes/$id',
   getParentRoute: () => AdminRoute,
 } as any)
 
@@ -127,6 +157,8 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/quote': typeof QuoteRoute
   '/services': typeof ServicesRoute
+  '/admin/chat': typeof AdminChatRoute
+  '/admin/clients': typeof AdminClientsRoute
   '/admin/inbox': typeof AdminInboxRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -134,10 +166,13 @@ export interface FileRoutesByFullPath {
   '/admin/testimonials': typeof AdminTestimonialsRoute
   '/admin/login': typeof AdminLoginRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
+  '/q/$token': typeof QTokenRoute
   '/admin/': typeof AdminIndexRoute
   '/portfolio/': typeof PortfolioIndexRoute
   '/admin/projects/$id': typeof AdminProjectsIdRoute
+  '/admin/quotes/$id': typeof AdminQuotesIdRoute
   '/admin/projects/': typeof AdminProjectsIndexRoute
+  '/admin/quotes/': typeof AdminQuotesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -146,6 +181,8 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/quote': typeof QuoteRoute
   '/services': typeof ServicesRoute
+  '/admin/chat': typeof AdminChatRoute
+  '/admin/clients': typeof AdminClientsRoute
   '/admin/inbox': typeof AdminInboxRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -153,10 +190,13 @@ export interface FileRoutesByTo {
   '/admin/testimonials': typeof AdminTestimonialsRoute
   '/admin/login': typeof AdminLoginRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
+  '/q/$token': typeof QTokenRoute
   '/admin': typeof AdminIndexRoute
   '/portfolio': typeof PortfolioIndexRoute
   '/admin/projects/$id': typeof AdminProjectsIdRoute
+  '/admin/quotes/$id': typeof AdminQuotesIdRoute
   '/admin/projects': typeof AdminProjectsIndexRoute
+  '/admin/quotes': typeof AdminQuotesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -167,6 +207,8 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/quote': typeof QuoteRoute
   '/services': typeof ServicesRoute
+  '/admin/chat': typeof AdminChatRoute
+  '/admin/clients': typeof AdminClientsRoute
   '/admin/inbox': typeof AdminInboxRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -174,10 +216,13 @@ export interface FileRoutesById {
   '/admin/testimonials': typeof AdminTestimonialsRoute
   '/admin_/login': typeof AdminLoginRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
+  '/q/$token': typeof QTokenRoute
   '/admin/': typeof AdminIndexRoute
   '/portfolio/': typeof PortfolioIndexRoute
   '/admin/projects/$id': typeof AdminProjectsIdRoute
+  '/admin/quotes/$id': typeof AdminQuotesIdRoute
   '/admin/projects/': typeof AdminProjectsIndexRoute
+  '/admin/quotes/': typeof AdminQuotesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -189,6 +234,8 @@ export interface FileRouteTypes {
     | '/contact'
     | '/quote'
     | '/services'
+    | '/admin/chat'
+    | '/admin/clients'
     | '/admin/inbox'
     | '/admin/services'
     | '/admin/settings'
@@ -196,10 +243,13 @@ export interface FileRouteTypes {
     | '/admin/testimonials'
     | '/admin/login'
     | '/portfolio/$slug'
+    | '/q/$token'
     | '/admin/'
     | '/portfolio/'
     | '/admin/projects/$id'
+    | '/admin/quotes/$id'
     | '/admin/projects/'
+    | '/admin/quotes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -208,6 +258,8 @@ export interface FileRouteTypes {
     | '/contact'
     | '/quote'
     | '/services'
+    | '/admin/chat'
+    | '/admin/clients'
     | '/admin/inbox'
     | '/admin/services'
     | '/admin/settings'
@@ -215,10 +267,13 @@ export interface FileRouteTypes {
     | '/admin/testimonials'
     | '/admin/login'
     | '/portfolio/$slug'
+    | '/q/$token'
     | '/admin'
     | '/portfolio'
     | '/admin/projects/$id'
+    | '/admin/quotes/$id'
     | '/admin/projects'
+    | '/admin/quotes'
   id:
     | '__root__'
     | '/'
@@ -228,6 +283,8 @@ export interface FileRouteTypes {
     | '/contact'
     | '/quote'
     | '/services'
+    | '/admin/chat'
+    | '/admin/clients'
     | '/admin/inbox'
     | '/admin/services'
     | '/admin/settings'
@@ -235,10 +292,13 @@ export interface FileRouteTypes {
     | '/admin/testimonials'
     | '/admin_/login'
     | '/portfolio/$slug'
+    | '/q/$token'
     | '/admin/'
     | '/portfolio/'
     | '/admin/projects/$id'
+    | '/admin/quotes/$id'
     | '/admin/projects/'
+    | '/admin/quotes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -251,6 +311,7 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRoute
   AdminLoginRoute: typeof AdminLoginRoute
   PortfolioSlugRoute: typeof PortfolioSlugRoute
+  QTokenRoute: typeof QTokenRoute
   PortfolioIndexRoute: typeof PortfolioIndexRoute
 }
 
@@ -312,6 +373,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/chat': {
+      id: '/admin/chat'
+      path: '/chat'
+      fullPath: '/admin/chat'
+      preLoaderRoute: typeof AdminChatRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/clients': {
+      id: '/admin/clients'
+      path: '/clients'
+      fullPath: '/admin/clients'
+      preLoaderRoute: typeof AdminClientsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/inbox': {
       id: '/admin/inbox'
       path: '/inbox'
@@ -368,6 +443,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortfolioSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/q/$token': {
+      id: '/q/$token'
+      path: '/q/$token'
+      fullPath: '/q/$token'
+      preLoaderRoute: typeof QTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/projects/': {
       id: '/admin/projects/'
       path: '/projects'
@@ -382,10 +464,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProjectsIdRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/quotes/': {
+      id: '/admin/quotes/'
+      path: '/quotes'
+      fullPath: '/admin/quotes/'
+      preLoaderRoute: typeof AdminQuotesIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/quotes/$id': {
+      id: '/admin/quotes/$id'
+      path: '/quotes/$id'
+      fullPath: '/admin/quotes/$id'
+      preLoaderRoute: typeof AdminQuotesIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminChatRoute: typeof AdminChatRoute
+  AdminClientsRoute: typeof AdminClientsRoute
   AdminInboxRoute: typeof AdminInboxRoute
   AdminServicesRoute: typeof AdminServicesRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -393,10 +491,14 @@ interface AdminRouteChildren {
   AdminTestimonialsRoute: typeof AdminTestimonialsRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminProjectsIdRoute: typeof AdminProjectsIdRoute
+  AdminQuotesIdRoute: typeof AdminQuotesIdRoute
   AdminProjectsIndexRoute: typeof AdminProjectsIndexRoute
+  AdminQuotesIndexRoute: typeof AdminQuotesIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminChatRoute: AdminChatRoute,
+  AdminClientsRoute: AdminClientsRoute,
   AdminInboxRoute: AdminInboxRoute,
   AdminServicesRoute: AdminServicesRoute,
   AdminSettingsRoute: AdminSettingsRoute,
@@ -404,7 +506,9 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminTestimonialsRoute: AdminTestimonialsRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminProjectsIdRoute: AdminProjectsIdRoute,
+  AdminQuotesIdRoute: AdminQuotesIdRoute,
   AdminProjectsIndexRoute: AdminProjectsIndexRoute,
+  AdminQuotesIndexRoute: AdminQuotesIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -419,6 +523,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRoute,
   AdminLoginRoute: AdminLoginRoute,
   PortfolioSlugRoute: PortfolioSlugRoute,
+  QTokenRoute: QTokenRoute,
   PortfolioIndexRoute: PortfolioIndexRoute,
 }
 export const routeTree = rootRouteImport
