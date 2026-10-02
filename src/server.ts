@@ -3,8 +3,11 @@
 import handler from "@tanstack/react-start/server-entry";
 import PostalMime from "postal-mime";
 import type { AppEnv } from "~/lib/env";
+import { SESSION_COOKIE, getStaffByToken, readCookie } from "~/server/auth";
 
-const MAX_UPLOAD = 8 * 1024 * 1024; // 8 MB per photo
+const MAX_UPLOAD = 8 * 1024 * 1024; // 8 MB per visitor photo
+const MAX_ADMIN_UPLOAD = 15 * 1024 * 1024; // 15 MB per dashboard upload
+const ADMIN_EXTRA_TYPES: Record<string, string> = { "image/x-icon": "ico", "image/vnd.microsoft.icon": "ico", "image/gif": "gif" };
 const IMAGE_TYPES: Record<string, string> = {
   "image/jpeg": "jpg",
   "image/png": "png",
@@ -24,14 +27,20 @@ async function serveMedia(request: Request, env: AppEnv, key: string) {
   obj.writeHttpMetadata(headers);
   headers.set("etag", obj.httpEtag);
   headers.set("Cache-Control", "public, max-age=31536000, immutable");
+  headers.set("X-Content-Type-Options", "nosniff");
   if (!("body" in obj) || !obj.body) return new Response(null, { status: 304, headers });
   return new Response(obj.body, { headers });
 }
 
-/** Public upload for quote-request photos only. Admin uploads come in Phase 2 behind login. */
-async function handleUpload(request: Request, env: AppEnv) {
+/**
+ * Photo uploads. Public visitors (quote requests) go to uploads/, max 8 MB.
+ * Logged-in staff (dashboard) go to library/, max 15 MB, and may also upload .ico favicons.
+ */
+async function handleUpload(request: Request, env: AppEnv, admin: boolean) {
+  const limit = admin ? MAX_ADMIN_UPLOAD : MAX_UPLOAD;
+  const limitMb = Math.round(limit / 1024 / 1024);
   const len = Number(request.headers.get("content-length") || 0);
-  if (len > MAX_UPLOAD + 64 * 1024) return json({ error: "Photo is too large (max 8 MB)." }, 413);
+  if (len > limit + 64 * 1024) return json({ error: `Photo is too large (max ${limitMb} MB).` }, 413);
   let form: FormData;
   try {
     form = await request.formData();
@@ -40,12 +49,12 @@ async function handleUpload(request: Request, env: AppEnv) {
   }
   const file = form.get("file");
   if (!(file instanceof File)) return json({ error: "No file received." }, 400);
-  const ext = IMAGE_TYPES[file.type];
+  const ext = IMAGE_TYPES[file.type] ?? (admin ? ADMIN_EXTRA_TYPES[file.type] : undefined);
   if (!ext) return json({ error: "Please upload a JPG, PNG, WEBP or HEIC photo." }, 415);
-  if (file.size > MAX_UPLOAD) return json({ error: "Photo is too large (max 8 MB)." }, 413);
+  if (file.size > limit) return json({ error: `Photo is too large (max ${limitMb} MB).` }, 413);
 
   const d = new Date();
-  const key = `uploads/${d.getUTCFullYear()}/${String(d.getUTCMonth() + 1).padStart(2, "0")}/${crypto.randomUUID()}.${ext}`;
+  const key = `${admin ? "library" : "uploads"}/${d.getUTCFullYear()}/${String(d.getUTCMonth() + 1).padStart(2, "0")}/${crypto.randomUUID()}.${ext}`;
   await env.MEDIA.put(key, file.stream(), { httpMetadata: { contentType: file.type } });
   return json({ url: `/media/${key}` });
 }
@@ -58,7 +67,12 @@ export default {
       return serveMedia(request, env, decodeURIComponent(url.pathname.slice("/media/".length)));
     }
     if (url.pathname === "/api/upload" && request.method === "POST") {
-      return handleUpload(request, env);
+      return handleUpload(request, env, false);
+    }
+    if (url.pathname === "/api/admin/upload" && request.method === "POST") {
+      const staff = await getStaffByToken(readCookie(request, SESSION_COOKIE));
+      if (!staff) return json({ error: "Please log in again." }, 401);
+      return handleUpload(request, env, true);
     }
 
     return (handler as { fetch: (r: Request, e?: unknown, c?: unknown) => Promise<Response> }).fetch(request, env, ctx);

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
-import { cn, img, phoneDigits, useSite, waLink } from "~/lib/ui";
+import { cn, img, phoneDigits, useSite, waLink, whiteLogo } from "~/lib/ui";
 import { SiteLink } from "./SiteLink";
 import { CloseIcon, MenuIcon, PhoneIcon, WhatsAppIcon } from "./Icons";
 import { SocialLinks } from "./SocialLinks";
@@ -26,6 +26,9 @@ export function Header() {
   }, [open]);
 
   const solid = !overlay || scrolled || open;
+  // Over the photo (see-through header) use the white logo; once solid, the normal one.
+  const white = whiteLogo(s.brand);
+  const logo = !solid && white ? white : s.brand.logoUrl ? { src: s.brand.logoUrl, style: undefined } : null;
   const isActive = (to: string) => (to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(to + "/"));
 
   return (
@@ -61,8 +64,13 @@ export function Header() {
       >
         <div className="container-x flex h-full items-center justify-between gap-6">
           <SiteLink to="/" className="flex min-w-0 items-center gap-3">
-            {s.brand.logoUrl ? (
-              <img src={img(s.brand.logoUrl, 400)} alt={s.brand.name} style={{ height: "var(--logo-h)" }} className="w-auto object-contain" />
+            {logo ? (
+              <img
+                src={img(logo.src, 400)}
+                alt={s.brand.name}
+                style={{ height: "var(--logo-h)", ...logo.style }}
+                className="w-auto object-contain transition-[filter] duration-300"
+              />
             ) : (
               <span className="flex flex-col leading-none">
                 <span className="font-heading text-2xl font-semibold tracking-tight md:text-[1.7rem]">{s.brand.name}</span>

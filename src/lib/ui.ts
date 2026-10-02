@@ -34,6 +34,17 @@ export function waLink(phone: string, message = ""): string {
   return `https://wa.me/${d}${message ? `?text=${encodeURIComponent(message)}` : ""}`;
 }
 
+/**
+ * Which logo to show on a dark background (see-through header over a photo, footer).
+ * Uses the uploaded white logo if there is one, otherwise the normal logo turned white with a CSS filter.
+ */
+export function whiteLogo(brand: { logoUrl: string; logoWhiteUrl?: string; autoWhiteLogo?: boolean }): { src: string; style?: { filter: string } } | null {
+  if (brand.logoWhiteUrl) return { src: brand.logoWhiteUrl };
+  if (!brand.logoUrl) return null;
+  if (brand.autoWhiteLogo === false) return { src: brand.logoUrl };
+  return { src: brand.logoUrl, style: { filter: "brightness(0) invert(1)" } };
+}
+
 export const isExternal = (to: string) => /^(https?:|mailto:|tel:|#)/.test(to);
 
 export const cn = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(" ");

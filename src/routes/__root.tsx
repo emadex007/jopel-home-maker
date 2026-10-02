@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 import type { ReactNode } from "react";
-import { HeadContent, Link, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
+import { HeadContent, Link, Outlet, Scripts, createRootRoute, useRouterState } from "@tanstack/react-router";
 import appCss from "~/styles.css?url";
 import { getServices, getSite } from "~/lib/api";
 import { SITE_DEFAULTS } from "~/lib/site-defaults";
@@ -63,6 +63,18 @@ function RootDocument({ children }: { children: ReactNode }) {
 
 function RootLayout() {
   const { settings, services } = Route.useLoaderData();
+  const pathname = useRouterState({ select: (st) => st.location.pathname });
+
+  // The admin dashboard has its own layout (src/routes/admin.tsx).
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    return (
+      <SiteContext.Provider value={settings}>
+        <ThemeStyle s={settings} />
+        <Outlet />
+      </SiteContext.Provider>
+    );
+  }
+
   return (
     <SiteContext.Provider value={settings}>
       <ThemeStyle s={settings} />

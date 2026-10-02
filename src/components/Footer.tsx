@@ -1,4 +1,4 @@
-import { phoneDigits, useSite, waLink } from "~/lib/ui";
+import { img, phoneDigits, useSite, waLink, whiteLogo } from "~/lib/ui";
 import { SiteLink } from "./SiteLink";
 import { ClockIcon, MailIcon, PhoneIcon, PinIcon, WhatsAppIcon } from "./Icons";
 import { SocialLinks } from "./SocialLinks";
@@ -8,13 +8,19 @@ export function Footer({ services }: { services?: Pick<Service, "slug" | "title"
   const s = useSite();
   const c = s.contact;
   const year = new Date().getFullYear();
+  const logo = s.footer.showLogo ? whiteLogo(s.brand) : null;
+  const logoH = Math.min(140, Math.max(20, Number(s.footer.logoHeight) || 56));
   const copyright = s.footer.copyright.replace("{year}", String(year)).replace("{name}", s.brand.name);
 
   return (
     <footer style={{ background: "var(--footer-bg)", color: "var(--footer-fg)" }}>
       <div className="container-x grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-12 lg:py-20">
         <div className="lg:col-span-4">
-          <p className="font-heading text-3xl">{s.brand.name}</p>
+          {logo ? (
+            <img src={img(logo.src, 500)} alt={s.brand.name} style={{ height: logoH, ...logo.style }} className="w-auto max-w-full object-contain" />
+          ) : (
+            <p className="font-heading text-3xl">{s.brand.name}</p>
+          )}
           {s.brand.tagline && <p className="mt-1 text-sm italic opacity-70">{s.brand.tagline}</p>}
           <p className="mt-5 max-w-sm text-sm leading-relaxed opacity-75">{s.footer.about}</p>
           {s.footer.showSocial && <SocialLinks size={20} className="mt-6 gap-5" />}

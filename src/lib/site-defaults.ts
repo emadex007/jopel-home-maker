@@ -10,6 +10,8 @@ export type SiteSettings = {
     name: string;
     tagline: string;
     logoUrl: string; // leave empty to show the name as text
+    logoWhiteUrl: string; // optional white version, used over photos and in the footer
+    autoWhiteLogo: boolean; // if no white version is uploaded, turn the normal logo white automatically
     faviconUrl: string;
   };
   theme: {
@@ -121,6 +123,8 @@ export type SiteSettings = {
     showServices: boolean;
     showContact: boolean;
     showSocial: boolean;
+    showLogo: boolean; // show the (white) logo instead of the name
+    logoHeight: number; // px
     copyright: string; // {year} and {name} are replaced
   };
   seo: {
@@ -138,6 +142,8 @@ export const SITE_DEFAULTS: SiteSettings = {
     name: "Jo-pearl Home Maker",
     tagline: "...experience the difference",
     logoUrl: "",
+    logoWhiteUrl: "",
+    autoWhiteLogo: true,
     faviconUrl: "",
   },
   theme: {
@@ -271,6 +277,8 @@ export const SITE_DEFAULTS: SiteSettings = {
     showServices: true,
     showContact: true,
     showSocial: true,
+    showLogo: true,
+    logoHeight: 56,
     copyright: "© {year} {name}. All rights reserved.",
   },
   seo: {
