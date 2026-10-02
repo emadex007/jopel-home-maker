@@ -5,6 +5,7 @@ import { adminBadgeCounts } from "~/lib/chat-api";
 import { cn, useSite } from "~/lib/ui";
 import { ToastProvider } from "~/components/admin/kit";
 import { CloseIcon, MenuIcon } from "~/components/Icons";
+import { pageTitle } from "~/lib/brand";
 
 export const Route = createFileRoute("/admin")({
   beforeLoad: async ({ location }) => {
@@ -12,7 +13,7 @@ export const Route = createFileRoute("/admin")({
     if (!me) throw redirect({ to: "/admin/login", search: { next: location.pathname } });
     return { me };
   },
-  head: () => ({ meta: [{ title: "Dashboard | Jo-pearl Home Maker" }, { name: "robots", content: "noindex, nofollow" }] }),
+  head: () => ({ meta: [{ title: pageTitle("Dashboard") }, { name: "robots", content: "noindex, nofollow" }] }),
   component: AdminLayout,
 });
 
@@ -31,7 +32,9 @@ const NAV: { to: string; label: string; icon: string; exact?: boolean; badge?: "
   { to: "/admin/services", label: "Services", icon: "M12 3l9 5-9 5-9-5zM3 13l9 5 9-5" },
   { to: "/admin/testimonials", label: "Testimonials", icon: "M7 8h10M7 12h6M5 4h14a1 1 0 011 1v11a1 1 0 01-1 1h-6l-5 4v-4H5a1 1 0 01-1-1V5a1 1 0 011-1z" },
   { to: "/admin/clients", label: "Clients & partners", icon: "M3 21h18M5 21V7l7-4 7 4v14M9 9h1M14 9h1M9 13h1M14 13h1M10 21v-4h4v4" },
+  { to: "/admin/faqs", label: "FAQs", icon: "M12 21a9 9 0 100-18 9 9 0 000 18zM9.5 9a2.5 2.5 0 114 2c-.9.6-1.5 1.1-1.5 2.2M12 17h.01" },
   { to: "/admin/settings", label: "Site settings", icon: "M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0M14 4v4M8 10v4M16 16v4" },
+  { to: "/admin/backups", label: "Backups", icon: "M4 7c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 7v10c0 1.7 3.6 3 8 3s8-1.3 8-3V7M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" },
   { to: "/admin/staff", label: "Staff & account", icon: "M16 19v-1a4 4 0 00-4-4H6a4 4 0 00-4 4v1M9 10a3 3 0 100-6 3 3 0 000 6zM22 19v-1a4 4 0 00-3-3.9M16 4.1a3 3 0 010 5.8" },
 ];
 

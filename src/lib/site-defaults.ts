@@ -72,6 +72,8 @@ export type SiteSettings = {
     sliderSeconds: number; // how long each testimonial shows before sliding
     showClients: boolean;
     clientsTitle: string;
+    showFaq: boolean;
+    faqTitle: string;
     showCta: boolean;
     process: { title: string; text: string }[];
     ctaTitle: string;
@@ -99,6 +101,7 @@ export type SiteSettings = {
     quoteIntro: string;
     contactTitle: string;
     contactIntro: string;
+    contactShowFaq: boolean;
     formsImage: string;
   };
   contact: {
@@ -233,6 +236,8 @@ export const SITE_DEFAULTS: SiteSettings = {
     sliderSeconds: 6,
     showClients: true,
     clientsTitle: "Clients & partners we've worked with",
+    showFaq: true,
+    faqTitle: "Frequently asked questions",
     showCta: true,
     process: [
       { title: "Consultation", text: "We visit or call to understand your space, style, budget and timeline." },
@@ -271,6 +276,7 @@ export const SITE_DEFAULTS: SiteSettings = {
     quoteIntro: "Tell us about your space. The more detail you share, the more accurate our quotation will be.",
     contactTitle: "Contact Us",
     contactIntro: "Call, WhatsApp, email or send us a message. We'll get back to you as soon as possible.",
+    contactShowFaq: true,
     formsImage: U("1606744888344-493238951221", 2200),
   },
   contact: {

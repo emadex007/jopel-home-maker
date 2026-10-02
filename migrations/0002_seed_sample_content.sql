@@ -1,4 +1,4 @@
--- Jo-pearl Home Maker: SAMPLE content so the site isn't empty on day one.
+-- SAMPLE content so the site isn't empty on day one.
 -- Photos are from Unsplash. Replace projects, services and testimonials with real ones from the admin dashboard.
 
 INSERT INTO services (slug,title,summary,description,image,sort_order) VALUES ('interior-design','Interior Design','Full-service design from concept to completion.','We plan your space from the ground up: layout, colour palette, materials, furniture, lighting and décor, then manage the work until it is ready to live in.','https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1600&q=80',0);

@@ -3,10 +3,11 @@ import { getServices } from "~/lib/api";
 import { cn, img, useSite } from "~/lib/ui";
 import { PageHero } from "~/components/ui";
 import { ArrowRight } from "~/components/Icons";
+import { pageTitle } from "~/lib/brand";
 
 export const Route = createFileRoute("/services")({
   loader: () => getServices(),
-  head: () => ({ meta: [{ title: "Services | Jo-pearl Home Maker" }] }),
+  head: () => ({ meta: [{ title: pageTitle("Services") }] }),
   component: Services,
 });
 

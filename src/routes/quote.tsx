@@ -5,6 +5,7 @@ import { cn, useSite } from "~/lib/ui";
 import { FormError, FormSuccess, Honeypot, PageHero } from "~/components/ui";
 import { ContactPanel } from "~/components/ContactPanel";
 import { CloseIcon, UploadIcon } from "~/components/Icons";
+import { pageTitle } from "~/lib/brand";
 
 type Search = { service?: string };
 
@@ -12,7 +13,7 @@ export const Route = createFileRoute("/quote")({
   validateSearch: (s: Record<string, unknown>): Search => ({
     service: typeof s.service === "string" ? s.service.slice(0, 120) : undefined,
   }),
-  head: () => ({ meta: [{ title: "Request a Quote | Jo-pearl Home Maker" }] }),
+  head: () => ({ meta: [{ title: pageTitle("Request a Quote") }] }),
   component: Quote,
 });
 

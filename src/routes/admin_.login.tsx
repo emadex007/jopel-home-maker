@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { getAuthState, login, setupOwner } from "~/lib/admin-api";
 import { useSite } from "~/lib/ui";
+import { pageTitle } from "~/lib/brand";
 
 type Search = { next?: string };
 
@@ -14,7 +15,7 @@ export const Route = createFileRoute("/admin_/login")({
     if (state.me) throw redirect({ to: "/admin" });
     return state;
   },
-  head: () => ({ meta: [{ title: "Log in | Jo-pearl Home Maker" }, { name: "robots", content: "noindex, nofollow" }] }),
+  head: () => ({ meta: [{ title: pageTitle("Log in") }, { name: "robots", content: "noindex, nofollow" }] }),
   component: LoginPage,
 });
 

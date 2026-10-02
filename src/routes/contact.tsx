@@ -1,17 +1,21 @@
 import { useState, type FormEvent } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { submitContact, type ContactInput } from "~/lib/api";
+import { getFaqs, submitContact, type ContactInput } from "~/lib/api";
+import { FaqList } from "~/components/FaqList";
 import { useSite } from "~/lib/ui";
 import { FormError, FormSuccess, Honeypot, PageHero } from "~/components/ui";
 import { ContactPanel } from "~/components/ContactPanel";
+import { pageTitle } from "~/lib/brand";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({ meta: [{ title: "Contact Us | Jo-pearl Home Maker" }] }),
+  loader: () => getFaqs(),
+  head: () => ({ meta: [{ title: pageTitle("Contact Us") }] }),
   component: Contact,
 });
 
 function Contact() {
   const s = useSite();
+  const faqs = Route.useLoaderData();
   const [f, setF] = useState<ContactInput>({ name: "", email: "", phone: "", subject: "", message: "", website: "" });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -78,6 +82,12 @@ function Contact() {
             )}
           </div>
         </div>
+        {s.pages.contactShowFaq && faqs.length > 0 && (
+          <div className="container-x mt-20">
+            <h2 className="mb-8 text-4xl md:text-5xl">{s.home.faqTitle}</h2>
+            <FaqList items={faqs} />
+          </div>
+        )}
         {s.contact.mapEmbedUrl.startsWith("https://www.google.com/maps/embed") && (
           <div className="container-x mt-12">
             <iframe

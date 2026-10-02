@@ -2,6 +2,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import {
   listClients,
+  listFaqs,
   getProjectBySlug,
   listProjects,
   listServices,
@@ -17,16 +18,19 @@ import { env } from "~/lib/env";
 export const getSite = createServerFn({ method: "GET" }).handler(async () => loadSettings());
 
 export const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
-  const [services, featured, testimonials, clients] = await Promise.all([
+  const [services, featured, testimonials, clients, faqs] = await Promise.all([
     listServices(),
     listProjects({ featuredOnly: true, limit: 6 }),
     listTestimonials(),
     listClients(),
+    listFaqs(),
   ]);
   // Fall back to latest projects if nothing is marked featured.
   const projects = featured.length ? featured : await listProjects({ limit: 6 });
-  return { services, projects, testimonials, clients };
+  return { services, projects, testimonials, clients, faqs };
 });
+
+export const getFaqs = createServerFn({ method: "GET" }).handler(async () => listFaqs());
 
 export const getServices = createServerFn({ method: "GET" }).handler(async () => listServices());
 

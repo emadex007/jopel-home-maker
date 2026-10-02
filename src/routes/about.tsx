@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { img, useSite } from "~/lib/ui";
 import { PageHero } from "~/components/ui";
+import { pageTitle } from "~/lib/brand";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({ meta: [{ title: "About Us | Jo-pearl Home Maker" }] }),
+  head: () => ({ meta: [{ title: pageTitle("About Us") }] }),
   component: About,
 });
 

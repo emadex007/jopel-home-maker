@@ -14,6 +14,7 @@ Built by Emadex Creations on the same stack as Ronia Logistics: **TanStack Start
 | 2 | Admin dashboard: login, projects & photo uploads (R2), services, testimonials, **site settings editor** (colours, fonts, sizes, header, footer, page text) with live preview, inbox, staff accounts | ✅ Done |
 | 3 | **Quotation builder** (from a quote request, optional VAT, valid-until, client link to view/print/accept, send by WhatsApp or email), **live chat** (bubble bottom-right, WhatsApp bottom-left, replies from the dashboard) | ✅ Done |
 | 4 | `sitemap.xml` + `robots.txt`, branded notification & quotation emails, share buttons on project pages | ✅ Done |
+| 5 | FAQs (home, contact, Google FAQ data), weekly automatic backups (Dashboard → Backups), reusable template (`npm run new-client`, see TEMPLATE.md) | ✅ Done |
 
 ## First-time setup (Windows, same as Ronia)
 
@@ -104,4 +105,6 @@ Testimonials: four SAMPLE templates are added switched off. Replace them with re
 | `src/components/admin/` | Dashboard UI kit + the settings editor schema (add a field there and it shows up in the editor) |
 | `src/lib/quotes-api.ts`, `src/lib/quote-calc.ts` | Quotations (dashboard + client page `/q/$token`) |
 | `src/lib/chat-api.ts`, `src/components/ChatWidget.tsx` | Live chat (visitor widget + dashboard) |
+| `src/server/backup.ts` | Weekly `.sql` backups to R2 (`[triggers]` in wrangler.toml) |
+| `scripts/new-client.mjs`, `TEMPLATE.md` | Reuse this project for another client |
 | `migrations/` | D1 schema + sample content |

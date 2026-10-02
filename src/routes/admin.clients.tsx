@@ -32,7 +32,7 @@ function ClientsAdmin() {
   return (
     <AdminPage
       title="Clients & partners"
-      subtitle="Logos of companies Jo-pearl has worked with. They scroll across the home page."
+      subtitle="Logos of companies you have worked with. They scroll across the home page."
       actions={addBtn}
     >
       {clients.length === 0 ? (

@@ -17,8 +17,10 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as QuoteRouteImport } from './routes/quote'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminBackupsRouteImport } from './routes/admin.backups'
 import { Route as AdminChatRouteImport } from './routes/admin.chat'
 import { Route as AdminClientsRouteImport } from './routes/admin.clients'
+import { Route as AdminFaqsRouteImport } from './routes/admin.faqs'
 import { Route as AdminInboxRouteImport } from './routes/admin.inbox'
 import { Route as AdminServicesRouteImport } from './routes/admin.services'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
@@ -73,6 +75,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBackupsRoute = AdminBackupsRouteImport.update({
+  id: '/backups',
+  path: '/backups',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminChatRoute = AdminChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -81,6 +88,11 @@ const AdminChatRoute = AdminChatRouteImport.update({
 const AdminClientsRoute = AdminClientsRouteImport.update({
   id: '/clients',
   path: '/clients',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFaqsRoute = AdminFaqsRouteImport.update({
+  id: '/faqs',
+  path: '/faqs',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminInboxRoute = AdminInboxRouteImport.update({
@@ -157,8 +169,10 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/quote': typeof QuoteRoute
   '/services': typeof ServicesRoute
+  '/admin/backups': typeof AdminBackupsRoute
   '/admin/chat': typeof AdminChatRoute
   '/admin/clients': typeof AdminClientsRoute
+  '/admin/faqs': typeof AdminFaqsRoute
   '/admin/inbox': typeof AdminInboxRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -181,8 +195,10 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/quote': typeof QuoteRoute
   '/services': typeof ServicesRoute
+  '/admin/backups': typeof AdminBackupsRoute
   '/admin/chat': typeof AdminChatRoute
   '/admin/clients': typeof AdminClientsRoute
+  '/admin/faqs': typeof AdminFaqsRoute
   '/admin/inbox': typeof AdminInboxRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -207,8 +223,10 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/quote': typeof QuoteRoute
   '/services': typeof ServicesRoute
+  '/admin/backups': typeof AdminBackupsRoute
   '/admin/chat': typeof AdminChatRoute
   '/admin/clients': typeof AdminClientsRoute
+  '/admin/faqs': typeof AdminFaqsRoute
   '/admin/inbox': typeof AdminInboxRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -234,8 +252,10 @@ export interface FileRouteTypes {
     | '/contact'
     | '/quote'
     | '/services'
+    | '/admin/backups'
     | '/admin/chat'
     | '/admin/clients'
+    | '/admin/faqs'
     | '/admin/inbox'
     | '/admin/services'
     | '/admin/settings'
@@ -258,8 +278,10 @@ export interface FileRouteTypes {
     | '/contact'
     | '/quote'
     | '/services'
+    | '/admin/backups'
     | '/admin/chat'
     | '/admin/clients'
+    | '/admin/faqs'
     | '/admin/inbox'
     | '/admin/services'
     | '/admin/settings'
@@ -283,8 +305,10 @@ export interface FileRouteTypes {
     | '/contact'
     | '/quote'
     | '/services'
+    | '/admin/backups'
     | '/admin/chat'
     | '/admin/clients'
+    | '/admin/faqs'
     | '/admin/inbox'
     | '/admin/services'
     | '/admin/settings'
@@ -373,6 +397,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/backups': {
+      id: '/admin/backups'
+      path: '/backups'
+      fullPath: '/admin/backups'
+      preLoaderRoute: typeof AdminBackupsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/chat': {
       id: '/admin/chat'
       path: '/chat'
@@ -385,6 +416,13 @@ declare module '@tanstack/react-router' {
       path: '/clients'
       fullPath: '/admin/clients'
       preLoaderRoute: typeof AdminClientsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/faqs': {
+      id: '/admin/faqs'
+      path: '/faqs'
+      fullPath: '/admin/faqs'
+      preLoaderRoute: typeof AdminFaqsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/inbox': {
@@ -482,8 +520,10 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminBackupsRoute: typeof AdminBackupsRoute
   AdminChatRoute: typeof AdminChatRoute
   AdminClientsRoute: typeof AdminClientsRoute
+  AdminFaqsRoute: typeof AdminFaqsRoute
   AdminInboxRoute: typeof AdminInboxRoute
   AdminServicesRoute: typeof AdminServicesRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -497,8 +537,10 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminBackupsRoute: AdminBackupsRoute,
   AdminChatRoute: AdminChatRoute,
   AdminClientsRoute: AdminClientsRoute,
+  AdminFaqsRoute: AdminFaqsRoute,
   AdminInboxRoute: AdminInboxRoute,
   AdminServicesRoute: AdminServicesRoute,
   AdminSettingsRoute: AdminSettingsRoute,

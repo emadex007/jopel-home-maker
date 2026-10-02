@@ -1,4 +1,4 @@
--- Jopel Home Maker: core schema
+-- Core schema
 -- Apply locally:  npm run db:migrate:local
 -- Apply live:     npm run db:migrate:remote
 

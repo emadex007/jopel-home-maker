@@ -3,10 +3,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { getPortfolio } from "~/lib/api";
 import { cn, useSite } from "~/lib/ui";
 import { PageHero, ProjectCard } from "~/components/ui";
+import { pageTitle } from "~/lib/brand";
 
 export const Route = createFileRoute("/portfolio/")({
   loader: () => getPortfolio(),
-  head: () => ({ meta: [{ title: "Portfolio | Jo-pearl Home Maker" }] }),
+  head: () => ({ meta: [{ title: pageTitle("Portfolio") }] }),
   component: Portfolio,
 });
 

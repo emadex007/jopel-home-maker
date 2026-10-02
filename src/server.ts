@@ -5,6 +5,7 @@ import PostalMime from "postal-mime";
 import type { AppEnv } from "~/lib/env";
 import { SESSION_COOKIE, getStaffByToken, readCookie } from "~/server/auth";
 import { rememberOrigin } from "~/server/db";
+import { BACKUP_PREFIX, runBackup } from "~/server/backup";
 
 const MAX_UPLOAD = 8 * 1024 * 1024; // 8 MB per visitor photo
 const MAX_ADMIN_UPLOAD = 15 * 1024 * 1024; // 15 MB per dashboard upload
@@ -21,7 +22,8 @@ const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
 
 async function serveMedia(request: Request, env: AppEnv, key: string) {
-  if (!key || key.includes("..")) return new Response("Not found", { status: 404 });
+  // Backups contain the whole database: never serve them publicly.
+  if (!key || key.includes("..") || key.startsWith(BACKUP_PREFIX)) return new Response("Not found", { status: 404 });
   const obj = await env.MEDIA.get(key, { onlyIf: request.headers, range: request.headers });
   if (!obj) return new Response("Not found", { status: 404 });
   const headers = new Headers();
@@ -107,6 +109,21 @@ export default {
     if (url.pathname === "/api/upload" && request.method === "POST") {
       return handleUpload(request, env, false);
     }
+    if (url.pathname === "/api/admin/backup" && request.method === "GET") {
+      const staff = await getStaffByToken(readCookie(request, SESSION_COOKIE));
+      if (!staff || staff.role !== "owner") return new Response("Only the owner can download backups.", { status: 403 });
+      const name = url.searchParams.get("name") || "";
+      if (!/^[\w.-]+\.sql$/.test(name)) return new Response("Not found", { status: 404 });
+      const obj = await env.MEDIA.get(BACKUP_PREFIX + name);
+      if (!obj) return new Response("Not found", { status: 404 });
+      return new Response(obj.body, {
+        headers: {
+          "Content-Type": "application/sql; charset=utf-8",
+          "Content-Disposition": `attachment; filename="${name}"`,
+          "Cache-Control": "no-store",
+        },
+      });
+    }
     if (url.pathname === "/api/admin/upload" && request.method === "POST") {
       const staff = await getStaffByToken(readCookie(request, SESSION_COOKIE));
       if (!staff) return json({ error: "Please log in again." }, 401);
@@ -114,6 +131,15 @@ export default {
     }
 
     return (handler as { fetch: (r: Request, e?: unknown, c?: unknown) => Promise<Response> }).fetch(request, env, ctx);
+  },
+
+  /** Weekly database backup (schedule set under [triggers] in wrangler.toml). */
+  async scheduled(_event: ScheduledController, env: AppEnv, ctx: ExecutionContext) {
+    ctx.waitUntil(
+      runBackup(env, "weekly")
+        .then((r) => console.log(`Backup saved: ${r.key} (${r.tables} tables, ${r.rows} rows)`))
+        .catch((err) => console.error("Scheduled backup failed", err)),
+    );
   },
 
   /**

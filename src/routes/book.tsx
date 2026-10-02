@@ -4,6 +4,7 @@ import { getServices, submitBooking, type BookingInput } from "~/lib/api";
 import { useSite } from "~/lib/ui";
 import { FormError, FormSuccess, Honeypot, PageHero } from "~/components/ui";
 import { ContactPanel } from "~/components/ContactPanel";
+import { pageTitle } from "~/lib/brand";
 
 type Search = { service?: string };
 
@@ -12,7 +13,7 @@ export const Route = createFileRoute("/book")({
     service: typeof s.service === "string" ? s.service.slice(0, 120) : undefined,
   }),
   loader: () => getServices(),
-  head: () => ({ meta: [{ title: "Book a Consultation | Jo-pearl Home Maker" }] }),
+  head: () => ({ meta: [{ title: pageTitle("Book a Consultation") }] }),
   component: Book,
 });
 

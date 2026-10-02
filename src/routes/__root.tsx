@@ -4,6 +4,7 @@ import { HeadContent, Link, Outlet, Scripts, createRootRoute, useRouterState } f
 import appCss from "~/styles.css?url";
 import { getServices, getSite } from "~/lib/api";
 import { SITE_DEFAULTS } from "~/lib/site-defaults";
+import { setBrandName } from "~/lib/brand";
 import { SiteContext, googleFontsHrefs, img } from "~/lib/ui";
 import { ThemeStyle } from "~/components/ThemeStyle";
 import { Header } from "~/components/Header";
@@ -13,6 +14,7 @@ import { ChatWidget } from "~/components/ChatWidget";
 export const Route = createRootRoute({
   loader: async () => {
     const [settings, services] = await Promise.all([getSite(), getServices().catch(() => [])]);
+    setBrandName(settings.brand.name);
     return { settings, services: services.map((s) => ({ slug: s.slug, title: s.title })) };
   },
   // Settings rarely change; avoid refetching them on every page change.

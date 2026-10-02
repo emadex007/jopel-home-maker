@@ -5,6 +5,7 @@ import { SiteLink } from "~/components/SiteLink";
 import { ProjectCard, SectionHeading } from "~/components/ui";
 import { ArrowRight } from "~/components/Icons";
 import { LogoMarquee, TestimonialSlider } from "~/components/Sliders";
+import { FaqList } from "~/components/FaqList";
 
 export const Route = createFileRoute("/")({
   loader: () => getHomeData(),
@@ -13,7 +14,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const s = useSite();
-  const { services, projects, testimonials, clients } = Route.useLoaderData();
+  const { services, projects, testimonials, clients, faqs } = Route.useLoaderData();
   const h = s.hero;
   const home = s.home;
   const center = h.align === "center";
@@ -167,6 +168,23 @@ function Home() {
             <SectionHeading eyebrow="Kind words" title={home.testimonialsTitle} align="center" />
             <div className="-mx-3">
               <TestimonialSlider items={testimonials} seconds={Number(home.sliderSeconds) || 6} />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* FAQ */}
+      {home.showFaq && faqs.length > 0 && (
+        <section className="section bg-surface">
+          <div className="container-x grid gap-10 lg:grid-cols-12">
+            <div className="lg:col-span-4">
+              <p className="eyebrow mb-4">Good to know</p>
+              <h2 className="text-4xl md:text-5xl">{home.faqTitle}</h2>
+              <p className="mt-4 text-muted">Can't find your answer? Ask us on the chat or send us a message.</p>
+              <Link to="/contact" className="btn btn-outline mt-6">Contact us</Link>
+            </div>
+            <div className="lg:col-span-8">
+              <FaqList items={faqs} />
             </div>
           </div>
         </section>

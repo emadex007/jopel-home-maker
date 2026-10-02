@@ -6,7 +6,7 @@ export interface AppEnv {
   MEDIA: R2Bucket;
   SITE_ENV?: string;
   RESEND_API_KEY?: string;
-  RESEND_FROM?: string; // e.g. "Jo-pearl Home Maker <hello@yourdomain.com>"
+  RESEND_FROM?: string; // e.g. "Business Name <hello@yourdomain.com>"
   ADMIN_NOTIFY_EMAIL?: string;
   ADMIN_SETUP_CODE?: string; // required once, to create the first owner account
 }

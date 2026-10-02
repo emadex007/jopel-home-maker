@@ -30,7 +30,7 @@ function ServicesAdmin() {
   return (
     <AdminPage
       title="Services"
-      subtitle="What Jo-pearl offers. Shown on the Services page, the home page and the booking form."
+      subtitle="What you offer. Shown on the Services page, the home page and the booking form."
       actions={<Btn variant="primary" onClick={() => setEdit({ ...EMPTY })}>+ New service</Btn>}
     >
       {services.length === 0 ? (

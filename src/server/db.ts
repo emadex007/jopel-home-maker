@@ -37,6 +37,8 @@ export type Testimonial = { id: number; name: string; role: string; quote: strin
 
 export type Client = { id: number; name: string; logo: string; url: string };
 
+export type Faq = { id: number; question: string; answer: string };
+
 // ---------- settings ----------
 
 export async function loadSettings(): Promise<SiteSettings> {
@@ -129,6 +131,15 @@ export async function listClients(): Promise<Client[]> {
   }
 }
 
+export async function listFaqs(): Promise<Faq[]> {
+  try {
+    const { results } = await env.DB.prepare("SELECT id, question, answer FROM faqs WHERE active = 1 ORDER BY sort_order, id").all<Faq>();
+    return results ?? [];
+  } catch {
+    return []; // table missing until migration 0005 is applied
+  }
+}
+
 // ---------- inquiries ----------
 
 export function makeRef(prefix: string) {
@@ -140,7 +151,7 @@ export function makeRef(prefix: string) {
 
 // ---------- email ----------
 
-/** The site's public address (e.g. https://jopearl-home-maker.xyz.workers.dev), remembered from incoming requests. */
+/** The site's public address (e.g. https://my-site.xyz.workers.dev), remembered from incoming requests. */
 let siteOrigin = "";
 export function rememberOrigin(origin: string) {
   if (origin && !/localhost|127\.0\.0\.1/.test(origin)) siteOrigin = origin;
@@ -151,7 +162,7 @@ export const getSiteOrigin = () => siteOrigin;
 const absolute = (url: string) => (!url ? "" : /^https?:\/\//.test(url) ? url : siteOrigin ? siteOrigin + url : "");
 const safeColor = (c: string, fallback: string) => (/^#[0-9a-fA-F]{3,8}$/.test(c || "") ? c : fallback);
 
-/** Wraps email content in Jo-pearl's branding: coloured header with logo, white card, footer with contact details. */
+/** Wraps email content in the business's branding: coloured header with logo, white card, footer with contact details. */
 export function emailLayout(s: SiteSettings, inner: string, opts: { button?: { label: string; href: string }; preheader?: string } = {}) {
   const primary = safeColor(s.theme.primary, "#1f1b18");
   const onPrimary = safeColor(s.theme.onPrimary, "#faf7f2");

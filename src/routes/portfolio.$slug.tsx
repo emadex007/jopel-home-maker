@@ -4,6 +4,7 @@ import { getProject } from "~/lib/api";
 import { cn, img, useSite, waLink } from "~/lib/ui";
 import { Lightbox } from "~/components/ui";
 import { ArrowLeft, ArrowRight, CheckIcon, FacebookIcon, ImagesIcon, WhatsAppIcon, XIcon } from "~/components/Icons";
+import { pageTitle } from "~/lib/brand";
 
 export const Route = createFileRoute("/portfolio/$slug")({
   loader: async ({ params }) => {
@@ -15,7 +16,7 @@ export const Route = createFileRoute("/portfolio/$slug")({
     loaderData
       ? {
           meta: [
-            { title: `${loaderData.project.title} | Jo-pearl Home Maker` },
+            { title: pageTitle(loaderData.project.title) },
             { name: "description", content: loaderData.project.summary },
             { property: "og:title", content: loaderData.project.title },
             { property: "og:description", content: loaderData.project.summary },

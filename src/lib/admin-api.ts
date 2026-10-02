@@ -4,6 +4,7 @@ import { deleteCookie, getCookie, setCookie } from "@tanstack/react-start/server
 import { env } from "~/lib/env";
 import { SETTINGS_KEYS, SITE_DEFAULTS, type SettingsKey } from "~/lib/site-defaults";
 import { loadSettings } from "~/server/db";
+import { listBackups as listBackupFiles, runBackup } from "~/server/backup";
 import {
   SESSION_COOKIE,
   SESSION_DAYS,
@@ -61,7 +62,7 @@ async function uniqueSlug(table: "projects" | "services", base: string, exceptId
 }
 
 /** Moves a row up or down by rewriting sort_order for the whole table. */
-async function moveRow(table: "projects" | "services" | "testimonials" | "project_photos" | "clients", id: number, dir: -1 | 1, where = "1=1", binds: unknown[] = []) {
+async function moveRow(table: "projects" | "services" | "testimonials" | "project_photos" | "clients" | "faqs", id: number, dir: -1 | 1, where = "1=1", binds: unknown[] = []) {
   const { results } = await env.DB.prepare(`SELECT id FROM ${table} WHERE ${where} ORDER BY sort_order, id`)
     .bind(...binds)
     .all<{ id: number }>();
@@ -514,6 +515,63 @@ export const moveClient = createServerFn({ method: "POST" })
     await moveRow("clients", int(data.id), data.dir === -1 ? -1 : 1);
     return { ok: true };
   });
+
+// ---------- FAQs ----------
+
+export type AdminFaq = { id?: number; question: string; answer: string; active: number };
+
+export const adminListFaqs = createServerFn({ method: "GET" }).handler(async () => {
+  await requireStaff();
+  const { results } = await env.DB.prepare("SELECT id, question, answer, active FROM faqs ORDER BY sort_order, id").all<Required<AdminFaq>>();
+  return results ?? [];
+});
+
+export const saveFaq = createServerFn({ method: "POST" })
+  .inputValidator((d: AdminFaq) => d)
+  .handler(async ({ data }) => {
+    await requireStaff();
+    const question = str(data.question, 300);
+    const answer = str(data.answer, 3000);
+    if (question.length < 5 || answer.length < 5) return { ok: false as const, error: "Please enter both the question and the answer." };
+    if (data.id) {
+      await env.DB.prepare("UPDATE faqs SET question=?, answer=?, active=? WHERE id=?").bind(question, answer, bool(data.active), int(data.id)).run();
+    } else {
+      await env.DB.prepare("INSERT INTO faqs (question, answer, active, sort_order) VALUES (?, ?, ?, (SELECT COALESCE(MAX(sort_order), -1) + 1 FROM faqs))")
+        .bind(question, answer, bool(data.active))
+        .run();
+    }
+    return { ok: true as const };
+  });
+
+export const deleteFaq = createServerFn({ method: "POST" })
+  .inputValidator((id: number) => int(id))
+  .handler(async ({ data: id }) => {
+    await requireStaff();
+    await env.DB.prepare("DELETE FROM faqs WHERE id = ?").bind(id).run();
+    return { ok: true };
+  });
+
+export const moveFaq = createServerFn({ method: "POST" })
+  .inputValidator((d: { id: number; dir: -1 | 1 }) => d)
+  .handler(async ({ data }) => {
+    await requireStaff();
+    await moveRow("faqs", int(data.id), data.dir === -1 ? -1 : 1);
+    return { ok: true };
+  });
+
+// ---------- backups (owner only) ----------
+
+export const adminListBackups = createServerFn({ method: "GET" }).handler(async () => {
+  const me = await requireStaff();
+  if (me.role !== "owner") return { allowed: false as const, backups: [] };
+  return { allowed: true as const, backups: await listBackupFiles(env) };
+});
+
+export const adminBackupNow = createServerFn({ method: "POST" }).handler(async () => {
+  await requireStaff("owner");
+  const r = await runBackup(env, "manual");
+  return { ok: true as const, ...r };
+});
 
 // ---------- settings ----------
 
