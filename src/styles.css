@@ -1,0 +1,172 @@
+@import "tailwindcss";
+
+/*
+  Colours, fonts and sizes come from the dashboard settings.
+  They are injected as CSS variables by <ThemeStyle /> in src/components/ThemeStyle.tsx.
+  The values below are only a fallback.
+*/
+:root {
+  --c-primary: #1f1b18;
+  --c-on-primary: #faf7f2;
+  --c-accent: #b08d57;
+  --c-bg: #faf7f2;
+  --c-surface: #ffffff;
+  --c-text: #1f1b18;
+  --c-muted: #6b645c;
+  --c-border: #e7dfd3;
+  --f-heading: "Cormorant Garamond", Georgia, serif;
+  --f-body: "Manrope", system-ui, sans-serif;
+  --base-font: 16px;
+  --radius: 4px;
+  --container: 1200px;
+  --section-y: 96px;
+  --header-h: 84px;
+  --logo-h: 44px;
+}
+
+@theme inline {
+  --color-primary: var(--c-primary);
+  --color-on-primary: var(--c-on-primary);
+  --color-accent: var(--c-accent);
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-ink: var(--c-text);
+  --color-muted: var(--c-muted);
+  --color-line: var(--c-border);
+  --font-heading: var(--f-heading);
+  --font-body: var(--f-body);
+  --radius-site: var(--radius);
+}
+
+html {
+  font-size: var(--base-font);
+  scroll-behavior: smooth;
+}
+body {
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--f-body);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 {
+  font-family: var(--f-heading);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+@layer components {
+  .container-x {
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+  @media (min-width: 768px) {
+    .container-x { padding-inline: 2rem; }
+  }
+  .section {
+    padding-block: calc(var(--section-y) * 0.6);
+  }
+  @media (min-width: 768px) {
+    .section { padding-block: var(--section-y); }
+  }
+  .eyebrow {
+    font-family: var(--f-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--c-accent);
+    font-weight: 600;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.6rem;
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+    cursor: pointer;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn-primary {
+    background: var(--c-primary);
+    color: var(--c-on-primary);
+  }
+  .btn-primary:hover { background: color-mix(in srgb, var(--c-primary) 85%, var(--c-accent)); }
+  .btn-accent {
+    background: var(--c-accent);
+    color: #fff;
+  }
+  .btn-accent:hover { background: color-mix(in srgb, var(--c-accent) 85%, #000); }
+  .btn-outline {
+    border: 1px solid currentColor;
+  }
+  .btn-outline:hover { background: color-mix(in srgb, currentColor 10%, transparent); }
+
+  .field label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--c-text);
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius);
+    padding: 0.75rem 0.9rem;
+    font-size: 0.95rem;
+    color: var(--c-text);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field textarea { min-height: 130px; resize: vertical; }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--c-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-accent) 20%, transparent);
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--c-border);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    background: var(--c-surface);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s;
+  }
+  .chip[data-on="true"] {
+    background: var(--c-primary);
+    color: var(--c-on-primary);
+    border-color: var(--c-primary);
+  }
+  .prose-site p + p { margin-top: 1rem; }
+}
+
+.img-zoom img { transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.img-zoom:hover img { transform: scale(1.05); }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.fade-up { animation: fade-up 0.8s ease both; }
+.fade-up-2 { animation: fade-up 0.8s 0.15s ease both; }
+.fade-up-3 { animation: fade-up 0.8s 0.3s ease both; }
+@media (prefers-reduced-motion: reduce) {
+  .fade-up, .fade-up-2, .fade-up-3 { animation: none; }
+  html { scroll-behavior: auto; }
+}
