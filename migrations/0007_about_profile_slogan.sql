@@ -1,0 +1,12 @@
+-- About page: company profile first (with counting numbers), then the slogan. Second email. Footer summary.
+-- Text only: logo, colours and photos are not changed. Applies only where these sections were saved from the dashboard.
+UPDATE settings SET value = json_set(value, '$.profileEyebrow', 'Company profile', '$.profileTitle', 'Jopearl Homemakers International', '$.profileText', 'Jopearl Homemakers International was established on the 10th of July 2006. We have delivered over 3,000 projects over the past 20 years, always ensuring excellent service delivery according to our clients'' specifications and preferences.
+
+We design and execute from carcass to finishing and furnishing, for both residential and commercial projects.', '$.establishedYear', 2006, '$.stats', json('[{"value":"3000+","label":"Projects delivered"},{"value":"{years}+","label":"Years of experience"},{"value":"2006","label":"Year established"}]'), '$.sloganEyebrow', 'Our slogan', '$.slogan', '...experience the difference', '$.sloganText', 'Our projects are exceptional and always a masterpiece, hence our slogan. For several years since 2006, we have created mind-blowing innovations and unique designs for both residential and commercial projects.', '$.sloganPromise', 'We create the most extraordinary designs for all project categories, with high professionalism and, most importantly, genuine materials. We don''t compromise, and we always deliver the very BEST.', '$.story', 'Every project we take on, from a single room to a complete building, is handled by one team: from the first design and rendering, through space planning and finishing, to the final furnishing and facility management.
+
+We look forward to partnering with you on your project, and we''re committed to rendering exceptional service delivery.
+
+Jopearl Homemakers is a member of Jopearl Int''l Ltd (RC 958458).'), updated_at = datetime('now') WHERE key = 'about';
+UPDATE settings SET value = json_set(value, '$.email2', 'jopearlgroupintl@gmail.com'), updated_at = datetime('now') WHERE key = 'contact';
+UPDATE settings SET value = json_set(value, '$.about', 'Established on 10th July 2006, Jopearl Homemakers International has delivered over 3,000 residential and commercial projects, designed and executed from carcass to finishing and furnishing. RC 958458 · A member of Jopearl Int''l Ltd.'), updated_at = datetime('now') WHERE key = 'footer';
+

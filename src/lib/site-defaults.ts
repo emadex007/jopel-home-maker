@@ -84,6 +84,15 @@ export type SiteSettings = {
     heroImage: string;
     title: string;
     intro: string;
+    profileEyebrow: string;
+    profileTitle: string;
+    profileText: string; // first section on the About page
+    establishedYear: number; // used to work out "years in business" automatically
+    stats: { value: string; label: string }[]; // counting numbers; "{years}" = years since established
+    sloganEyebrow: string;
+    slogan: string;
+    sloganText: string;
+    sloganPromise: string;
     story: string;
     image: string;
     values: { title: string; text: string }[];
@@ -110,6 +119,7 @@ export type SiteSettings = {
     whatsappMessage: string;
     showWhatsappButton: boolean;
     email: string;
+    email2: string; // optional second email
     address: string;
     hours: string;
     mapEmbedUrl: string; // Google Maps "Embed a map" src URL
@@ -255,8 +265,24 @@ export const SITE_DEFAULTS: SiteSettings = {
     heroImage: U("1583847268964-b28dc8f51f92", 2200),
     title: "About Jo-pearl Homemakers International",
     intro: "Established on 10th July 2006. Over 3,000 projects delivered across 20 years.",
+    profileEyebrow: "Company profile",
+    profileTitle: "Jopearl Homemakers International",
+    profileText:
+      "Jopearl Homemakers International was established on the 10th of July 2006. We have delivered over 3,000 projects over the past 20 years, always ensuring excellent service delivery according to our clients' specifications and preferences.\n\nWe design and execute from carcass to finishing and furnishing, for both residential and commercial projects.",
+    establishedYear: 2006,
+    stats: [
+      { value: "3000+", label: "Projects delivered" },
+      { value: "{years}+", label: "Years of experience" },
+      { value: "2006", label: "Year established" },
+    ],
+    sloganEyebrow: "Our slogan",
+    slogan: "...experience the difference",
+    sloganText:
+      "Our projects are exceptional and always a masterpiece, hence our slogan. For several years since 2006, we have created mind-blowing innovations and unique designs for both residential and commercial projects.",
+    sloganPromise:
+      "We create the most extraordinary designs for all project categories, with high professionalism and, most importantly, genuine materials. We don't compromise, and we always deliver the very BEST.",
     story:
-      "Jo-pearl Homemakers International was established on 10th July 2006. Over the past 20 years we have delivered more than 3,000 projects, always ensuring excellent service delivery according to our clients' specifications and preferences.\n\nWe design and execute from carcass to finishing and furnishing, for both residential and commercial projects. Our projects are exceptional and always a masterpiece, hence our slogan: ...experience the difference.\n\nFor many years since 2006, we have created mind-blowing innovations and unique designs. We look forward to partnering with you on your project, and we're committed to rendering exceptional service delivery.\n\nJo-pearl Homemakers is a member of Jopearl Int'l Ltd (RC 958458).",
+      "Every project we take on, from a single room to a complete building, is handled by one team: from the first design and rendering, through space planning and finishing, to the final furnishing and facility management.\n\nWe look forward to partnering with you on your project, and we're committed to rendering exceptional service delivery.\n\nJopearl Homemakers is a member of Jopearl Int'l Ltd (RC 958458).",
     image: U("1616486029423-aaa4789e8c9a", 1400),
     values: [
       { title: "Genuine materials", text: "We never cut corners on materials. Quality you can see and feel for years." },
@@ -287,6 +313,7 @@ export const SITE_DEFAULTS: SiteSettings = {
     whatsappMessage: "Hello Jo-pearl Homemakers, I'd like to make an enquiry about a project.",
     showWhatsappButton: true,
     email: "info@jopearlhomemakers.com",
+    email2: "jopearlgroupintl@gmail.com",
     address: "Friends Colony Estate, Osapa London,\nLekki, Lagos, Nigeria",
     hours: "",
     mapEmbedUrl: "",
@@ -304,7 +331,7 @@ export const SITE_DEFAULTS: SiteSettings = {
     background: "#1F1B18",
     textColor: "#E9E2D6",
     about:
-      "Project design and execution for residential and commercial spaces, from carcass to finishing and furnishing. Established 2006 · RC 958458 · A member of Jopearl Int'l Ltd.",
+      "Established on 10th July 2006, Jopearl Homemakers International has delivered over 3,000 residential and commercial projects, designed and executed from carcass to finishing and furnishing. RC 958458 · A member of Jopearl Int'l Ltd.",
     showServices: true,
     showContact: true,
     showSocial: true,

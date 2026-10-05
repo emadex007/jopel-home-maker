@@ -74,7 +74,9 @@ function PublicQuote() {
           <div className="text-sm text-zinc-600 sm:text-right">
             {c.address && <p className="whitespace-pre-line">{c.address}</p>}
             {c.phone && <p>{c.phone}</p>}
-            {c.email && <p>{c.email}</p>}
+            {[c.email, c.email2].filter(Boolean).map((e) => (
+              <p key={e}>{e}</p>
+            ))}
           </div>
         </header>
 

@@ -77,11 +77,11 @@ export function Footer({ services }: { services?: Pick<Service, "slug" | "title"
                   <a href={waLink(c.whatsapp, c.whatsappMessage)} target="_blank" rel="noopener noreferrer" className="flex gap-3 opacity-80 hover:opacity-100"><WhatsAppIcon size={18} className="shrink-0" /> WhatsApp us</a>
                 </li>
               )}
-              {c.email && (
-                <li>
-                  <a href={`mailto:${c.email}`} className="flex gap-3 break-all opacity-80 hover:opacity-100"><MailIcon size={18} className="shrink-0" /> {c.email}</a>
+              {[c.email, c.email2].filter(Boolean).map((e) => (
+                <li key={e}>
+                  <a href={`mailto:${e}`} className="flex gap-3 break-all opacity-80 hover:opacity-100"><MailIcon size={18} className="shrink-0" /> {e}</a>
                 </li>
-              )}
+              ))}
               {c.hours && (
                 <li className="flex gap-3 opacity-80"><ClockIcon size={18} className="shrink-0" /> {c.hours}</li>
               )}

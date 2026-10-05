@@ -25,11 +25,11 @@ export function ContactPanel({ title = "Prefer to talk?", children }: { title?: 
             <a href={`tel:+${phoneDigits(c.phone)}`} className="flex items-center gap-3 hover:opacity-80"><PhoneIcon size={18} /> {c.phone}</a>
           </li>
         )}
-        {c.email && (
-          <li>
-            <a href={`mailto:${c.email}`} className="flex items-center gap-3 break-all hover:opacity-80"><MailIcon size={18} className="shrink-0" /> {c.email}</a>
+        {[c.email, c.email2].filter(Boolean).map((e) => (
+          <li key={e}>
+            <a href={`mailto:${e}`} className="flex items-center gap-3 break-all hover:opacity-80"><MailIcon size={18} className="shrink-0" /> {e}</a>
           </li>
-        )}
+        ))}
         {c.address && (
           <li className="flex gap-3"><PinIcon size={18} className="mt-0.5 shrink-0" /> <span className="whitespace-pre-line opacity-90">{c.address}</span></li>
         )}
