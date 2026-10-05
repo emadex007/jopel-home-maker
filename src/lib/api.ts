@@ -123,6 +123,7 @@ export type QuoteInput = {
   email: string;
   phone: string;
   projectType: string;
+  services?: string[]; // which of the company's services they need
   spaces: string[];
   size: string;
   budget: string;
@@ -145,6 +146,7 @@ export const submitQuoteRequest = createServerFn({ method: "POST" })
     if (err) return { ok: false, error: err };
 
     const spaces = (Array.isArray(data.spaces) ? data.spaces : []).map((s) => clean(s, 60)).filter(Boolean).slice(0, 20);
+    const services = (Array.isArray(data.services) ? data.services : []).map((s) => clean(s, 120)).filter(Boolean).slice(0, 20);
     const attachments = (Array.isArray(data.attachments) ? data.attachments : [])
       .map((s) => clean(s, 300))
       .filter((s) => s.startsWith("/media/uploads/"))
@@ -158,6 +160,8 @@ export const submitQuoteRequest = createServerFn({ method: "POST" })
       timeline: clean(data.timeline, 80),
       details: clean(data.details, 4000),
     };
+    // Stored at the top of the details so it shows in the dashboard without a database change.
+    if (services.length) f.details = `Services needed: ${services.join(", ")}${f.details ? `\n\n${f.details}` : ""}`;
     if (!f.projectType) return { ok: false, error: "Please choose the type of project." };
 
     const ref = makeRef("QR");
@@ -176,6 +180,7 @@ export const submitQuoteRequest = createServerFn({ method: "POST" })
         ["Phone", phone],
         ["Email", email],
         ["Project type", f.projectType],
+        ["Services", services.join(", ")],
         ["Spaces", spaces.join(", ")],
         ["Size", f.size],
         ["Budget", f.budget],

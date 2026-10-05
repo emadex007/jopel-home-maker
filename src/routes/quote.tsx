@@ -1,6 +1,6 @@
 import { useRef, useState, type FormEvent } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { submitQuoteRequest, type QuoteInput } from "~/lib/api";
+import { getServices, submitQuoteRequest, type QuoteInput } from "~/lib/api";
 import { cn, useSite } from "~/lib/ui";
 import { FormError, FormSuccess, Honeypot, PageHero } from "~/components/ui";
 import { ContactPanel } from "~/components/ContactPanel";
@@ -13,12 +13,13 @@ export const Route = createFileRoute("/quote")({
   validateSearch: (s: Record<string, unknown>): Search => ({
     service: typeof s.service === "string" ? s.service.slice(0, 120) : undefined,
   }),
+  loader: () => getServices(),
   head: () => ({ meta: [{ title: pageTitle("Request a Quote") }] }),
   component: Quote,
 });
 
-const PROJECT_TYPES = ["Home / House", "Apartment", "Office", "Shop / Restaurant", "Short-let / Hotel", "Other"];
-const SPACES = ["Living room", "Bedroom", "Kitchen", "Dining", "Bathroom", "Children's room", "Office / Study", "Reception", "Whole space"];
+const PROJECT_TYPES = ["Residential (house)", "Apartment / estate", "Office", "Commercial / retail", "Hospitality / short-let", "Other"];
+const SPACES = ["Living room", "Bedroom", "Kitchen", "Dining", "Bathroom", "Children's room", "Office / Study", "Reception", "Exterior / facade", "Whole building"];
 const STYLES = ["Modern", "Contemporary", "Classic / Luxury", "Minimalist", "African / Afro-modern", "Not sure, help me decide"];
 const BUDGETS = ["Under ₦1M", "₦1M to ₦3M", "₦3M to ₦7M", "₦7M to ₦15M", "Above ₦15M", "Not sure yet"];
 const TIMELINES = ["As soon as possible", "Within 1 month", "1 to 3 months", "3+ months", "Just planning"];
@@ -51,19 +52,21 @@ function Chips({ options, value, onToggle, multi = false }: { options: string[];
 
 function Quote() {
   const s = useSite();
+  const services = Route.useLoaderData();
   const { service } = Route.useSearch();
   const [f, setF] = useState<QuoteInput>({
     name: "",
     email: "",
     phone: "",
     projectType: "",
+    services: service ? [service] : [],
     spaces: [],
     size: "",
     budget: "",
     style: "",
     location: "",
     timeline: "",
-    details: service ? `I'm interested in: ${service}\n\n` : "",
+    details: "",
     attachments: [],
     website: "",
   });
@@ -138,6 +141,20 @@ function Quote() {
                     <p className="mb-3 text-sm font-semibold">Type of project *</p>
                     <Chips options={PROJECT_TYPES} value={[f.projectType]} onToggle={(v) => set("projectType", v)} />
                   </div>
+                  {services.length > 0 && (
+                    <div>
+                      <p className="mb-3 text-sm font-semibold">Services you need <span className="font-normal text-muted">(choose all that apply)</span></p>
+                      <Chips
+                        multi
+                        options={services.map((sv) => sv.title)}
+                        value={f.services ?? []}
+                        onToggle={(v) => {
+                          const cur = f.services ?? [];
+                          set("services", cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v]);
+                        }}
+                      />
+                    </div>
+                  )}
                   <div>
                     <p className="mb-3 text-sm font-semibold">Which spaces? <span className="font-normal text-muted">(choose all that apply)</span></p>
                     <Chips

@@ -106,6 +106,25 @@ function Home() {
                   </span>
                 </Link>
               ))}
+
+              {services.length % 3 !== 0 && (
+                <Link
+                  to="/quote"
+                  className={cn(
+                    "group flex flex-col justify-between bg-primary p-8 text-on-primary transition-colors hover:bg-[color-mix(in_srgb,var(--c-primary)_88%,var(--c-accent))]",
+                    services.length % 3 === 1 ? "lg:col-span-2" : "lg:col-span-1",
+                  )}
+                >
+                  <span className="eyebrow !text-[color-mix(in_srgb,var(--c-accent)_55%,white)]">Start a project</span>
+                  <span>
+                    <span className="mt-6 block font-heading text-3xl">Not sure where to start?</span>
+                    <span className="mt-3 block text-sm leading-relaxed opacity-80">Tell us about your space and we'll recommend the right services, with a clear quotation.</span>
+                  </span>
+                  <span className="mt-6 flex items-center gap-2 text-sm font-semibold">
+                    Request a quote <ArrowRight size={14} />
+                  </span>
+                </Link>
+              )}
             </div>
           </div>
         </section>
